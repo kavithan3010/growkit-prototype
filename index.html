@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en-GB"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GrowKit app prototype</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#eef3f7;--surface:#fff;--ink:#0b2540;--mute:#4a6078;--blue:#0082c3;--blue-ink:#fff;--green:#1f8a4c;--line:#d3dde6;--warn:#fff4d6;--warn-ink:#5c4300}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1622;--surface:#122438;--ink:#eaf2f9;--mute:#9fb4c8;--blue:#3aa8e0;--blue-ink:#04121f;--green:#5fd392;--line:#264058;--warn:#3a2f10;--warn-ink:#ffe3a0}}
+html,body{height:100%;margin:0}*,*:before,*:after{box-sizing:inherit}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;display:flex;justify-content:center;align-items:center}
+.phone{width:min(390px,100%);height:min(780px,100%);background:var(--surface);display:flex;flex-direction:column;border:1px solid var(--line);border-radius:28px;overflow:hidden}
+header{padding:18px 20px 10px}header h1{font-size:20px;margin:0}header p{margin:2px 0 0;color:var(--mute);font-size:14px}
+main{flex:1;overflow:auto;padding:6px 20px 20px}
+section{display:none}section.on{display:block}
+h2{font-size:18px;margin:14px 0 8px}
+.card{border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.mute{color:var(--mute);font-size:14px}
+.alert{background:var(--warn);color:var(--warn-ink);border-radius:14px;padding:14px;margin:10px 0}
+button{font:inherit;cursor:pointer;border-radius:12px;border:1px solid var(--blue);background:transparent;color:var(--blue);padding:10px 14px;min-height:44px}
+button.p{background:var(--blue);color:var(--blue-ink);font-weight:600;width:100%}
+button.opt[aria-pressed=true]{background:var(--blue);color:var(--blue-ink)}
+.opts{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--green)}
+.big{font-size:34px;font-weight:700;color:var(--green);line-height:1.1}
+nav{display:flex;border-top:1px solid var(--line)}
+nav button{flex:1;border:0;border-radius:0;color:var(--mute);min-height:56px;font-size:14px}
+nav button[aria-current=page]{color:var(--blue);font-weight:700;box-shadow:inset 0 3px 0 var(--blue)}
+.toast{background:var(--green);color:var(--blue-ink);border-radius:12px;padding:12px;margin:10px 0;display:none}
+.note{font-size:12px;color:var(--mute);padding:8px 20px;border-top:1px solid var(--line)}
+</style></head><body>
+<div class="phone">
+<header><h1>GrowKit</h1><p id="sub">Pay for the growing, not the owning</p></header>
+<main>
+<section id="s0" class="on">
+ <h2>Mia, age 7</h2>
+ <div class="card"><div class="row"><b>Football boots</b><span class="mute">UK size 2</span></div><p class="mute">Swapped 1 time · on plan since September</p></div>
+ <div class="card"><div class="row"><b>Kids' bike</b><span class="mute">20 inch</span></div><p class="mute">Condition: good · last checked in store</p></div>
+ <div class="card"><div class="row"><b>Swimwear</b><span class="mute">Age 7–8</span></div><p class="mute">No swap needed yet</p></div>
+ <button class="p" data-go="1">See sizing alerts</button>
+</section>
+<section id="s1">
+ <h2>Sizing alerts</h2>
+ <div class="alert"><b>Boots may be getting tight.</b><br>Mia's last growth check was 4 months ago. Tell us how they fit and we will plan the next size.</div>
+ <div class="card"><b>How do Mia's boots fit?</b>
+  <div class="opts" id="fit"><button class="opt" aria-pressed="false">Fine</button><button class="opt" aria-pressed="false">A bit tight</button><button class="opt" aria-pressed="false">Too small</button></div>
+  <p class="mute" id="fitmsg">Your answer helps Decathlon predict size demand.</p></div>
+ <button class="p" data-go="2">Book a swap</button>
+</section>
+<section id="s2">
+ <h2>Book a swap</h2>
+ <p class="mute">Choose the next size. Return the old pair when you collect.</p>
+ <div class="opts" id="size"><button class="opt" aria-pressed="false">UK 2.5</button><button class="opt" aria-pressed="true">UK 3</button><button class="opt" aria-pressed="false">UK 3.5</button></div>
+ <h2>Store</h2><div class="opts" id="store"><button class="opt" aria-pressed="true">Nearest store</button><button class="opt" aria-pressed="false">Click and collect</button></div>
+ <h2>Time</h2><div class="opts" id="slot"><button class="opt" aria-pressed="true">Sat 10:00</button><button class="opt" aria-pressed="false">Sat 14:00</button><button class="opt" aria-pressed="false">Sun 11:00</button></div>
+ <button class="p" id="confirm">Confirm swap</button>
+ <div class="toast" id="toast" role="status"></div>
+</section>
+<section id="s3">
+ <h2>Your impact</h2>
+ <div class="card"><div class="big" id="saved">£0</div><div class="mute">estimated saved versus buying new</div></div>
+ <div class="card"><div class="big" id="reused">0</div><div class="mute">kits given a second life</div>
+  <div class="bar" style="margin-top:10px"><i id="barfill" style="width:0%"></i></div><p class="mute">Goal: 3 reused kits this year</p></div>
+ <p class="mute">Estimates are for the prototype only and use sample values.</p>
+</section>
+</main>
+<div class="note">Prototype with sample data. Not a live Decathlon service.</div>
+<nav id="nav"><button data-go="0" aria-current="page">Mia</button><button data-go="1">Sizes</button><button data-go="2">Swap</button><button data-go="3">Impact</button></nav>
+</div>
+<script>
+var saved=0,reused=0;
+function go(i){document.querySelectorAll('section').forEach(function(s,k){s.classList.toggle('on',k==i)});
+ document.querySelectorAll('nav button').forEach(function(b,k){if(k==i)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});}
+document.addEventListener('click',function(e){var t=e.target.closest('[data-go]');if(t)go(+t.dataset.go);
+ var o=e.target.closest('.opt');if(o){o.parentNode.querySelectorAll('.opt').forEach(function(b){b.setAttribute('aria-pressed',b===o)});
+  if(o.parentNode.id==='fit'){document.getElementById('fitmsg').textContent=o.textContent==='Fine'?'Great. We will check again in 2 months.':'Thanks. We will suggest the next size and reserve one from Second Life stock.'}}});
+document.getElementById('confirm').onclick=function(){
+ var sz=document.querySelector('#size [aria-pressed=true]').textContent,sl=document.querySelector('#slot [aria-pressed=true]').textContent;
+ saved+=24;reused+=1;document.getElementById('saved').textContent='£'+saved;document.getElementById('reused').textContent=reused;
+ document.getElementById('barfill').style.width=Math.min(100,reused/3*100)+'%';
+ var t=document.getElementById('toast');t.style.display='block';t.textContent='Swap confirmed: '+sz+', '+sl+'. Your old pair will be repaired and resold.';};
+</script></body></html>
